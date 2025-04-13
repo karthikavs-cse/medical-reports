@@ -1,6 +1,10 @@
 "use client";  // Required for Next.js App Router
 
 import { useEffect, useState } from "react";
+import api from "../../services/api";
+
+
+
 
 const ReportsPage = () => {
     const [reports, setReports] = useState([]);
@@ -8,7 +12,7 @@ const ReportsPage = () => {
     useEffect(() => {
         const fetchReports = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:8000/docs#/default/get_reports_reports__get", {
+                const response = await fetch("http://localhost:8000/reports/", {  // Update backend IP
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
@@ -31,11 +35,19 @@ const ReportsPage = () => {
         <div className="p-6">
             <h1 className="text-xl font-bold mb-4">Reports</h1>
             <ul className="list-disc pl-5">
-                {reports.map((report) => (
-                    <li key={report.id} className="mb-2">
-                        {report.type} - {report.date}
-                    </li>
-                ))}
+                {reports.length > 0 ? (
+                    <ul>
+                    {reports.map((report, idx) => (
+                      <li key={idx} className="border-b py-2">
+                        <p className="font-semibold">{report.title || "Untitled"}</p>
+                        <p className="text-sm text-gray-600">{report.description || "No description"}</p>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                ) : (
+                    <p>No reports available.</p>
+                )}
             </ul>
         </div>
     );

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../../services/api';
+import { addPatient } from '../../../services/api';  // Import addPatient function
 
 const AddPatientPage = () => {
   const [form, setForm] = useState({ name: '', age: '', gender: '', phone: '' });
@@ -14,9 +14,13 @@ const AddPatientPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.addPatient(form);  // Make sure this function exists in your api.js
-    alert('Patient added successfully!');
-    router.push('/patients');  // Navigate back to patient list
+    try {
+      await addPatient(form);  // Call the addPatient function
+      alert('Patient added successfully!');
+      router.push('/patients');  // Navigate back to patient list
+    } catch (error) {
+      alert('Failed to add patient');
+    }
   };
 
   return (
