@@ -39,8 +39,12 @@ const ReportsPage = () => {
                     <ul>
                     {reports.map((report, idx) => (
                       <li key={idx} className="border-b py-2">
-                        <p className="font-semibold">{report.title || "Untitled"}</p>
-                        <p className="text-sm text-gray-600">{report.description || "No description"}</p>
+                        <p className="font-semibold">{report.name}</p>
+                        <p className="text-sm">Age: {report.age}, Gender: {report.gender}</p>
+                        <p className="text-sm">Symptoms: {report.symptoms}</p>
+                        <p className="text-sm">Diagnosis: {report.diagnosis}</p>
+                        <p className="text-sm">Treatment: {report.treatment_plan}</p>
+
                       </li>
                     ))}
                   </ul>
