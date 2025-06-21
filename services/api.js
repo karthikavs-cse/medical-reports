@@ -1,21 +1,11 @@
-import axios from "axios";
+import axios from 'axios';
 
-const api = axios.create({
-  baseURL: "http://localhost:8000", 
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+const API_BASE = 'http://127.0.0.1:8000';
 
-// Define a function to add a patient
-export const addPatient = async (patientData) => {
-  try {
-    const response = await api.post("/patients", patientData);  // POST request to add patient
-    return response.data;  // Return response data if needed
-  } catch (error) {
-    console.error("Error adding patient", error);
-    throw error;
-  }
-};
+export const getPatients = () => axios.get(`${API_BASE}/patients`);
+export const addPatient = (data) => axios.post(`${API_BASE}/patients`, data);
+export const deletePatient = (id) => axios.delete(`${API_BASE}/patients/${id}`);
 
-export default api;
+export const addReport = (data) => axios.post(`${API_BASE}/reports`, data);
+export const getReports = () => axios.get(`${API_BASE}/reports`);
+export const getReportById = (id) => axios.get(`${API_BASE}/reports/${id}`);

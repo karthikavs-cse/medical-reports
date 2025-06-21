@@ -1,60 +1,105 @@
-"use client";  // Required for Next.js App Router
+"use client";
+import { useState, useEffect } from "react";
+import { getPatients, addReport } from "@/services/api";
+import { useRouter } from "next/navigation";
 
-import { useEffect, useState } from "react";
-import api from "../../services/api";
-
-
-
-
-const ReportsPage = () => {
-    const [reports, setReports] = useState([]);
-
-    useEffect(() => {
-        const fetchReports = async () => {
-            try {
-                const response = await fetch("http://localhost:8000/reports/", {  // Update backend IP
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" },
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                setReports(data);
-            } catch (error) {
-                console.error("Error fetching reports:", error);
-            }
-        };
-
-        fetchReports();
-    }, []);
-
-    return (
-        <div className="p-6">
-            <h1 className="text-xl font-bold mb-4">Reports</h1>
-            <ul className="list-disc pl-5">
-                {reports.length > 0 ? (
-                    <ul>
-                    {reports.map((report, idx) => (
-                      <li key={idx} className="border-b py-2">
-                        <p className="font-semibold">{report.name}</p>
-                        <p className="text-sm">Age: {report.age}, Gender: {report.gender}</p>
-                        <p className="text-sm">Symptoms: {report.symptoms}</p>
-                        <p className="text-sm">Diagnosis: {report.diagnosis}</p>
-                        <p className="text-sm">Treatment: {report.treatment_plan}</p>
-
-                      </li>
-                    ))}
-                  </ul>
-                  
-                ) : (
-                    <p>No reports available.</p>
-                )}
-            </ul>
-        </div>
-    );
+const reportTemplates = {
+  "Blood Test": ["Hemoglobin", "WBC Count", "Platelets"],
+  "Urine Test": ["Color", "pH", "Protein"],
+  "Liver Function": ["ALT", "AST", "Bilirubin"]
 };
 
-export default ReportsPage;
+export default function AddReportPage() {
+  const [patients, setPatients] = useState([]);
+  const [selectedPatient, setSelectedPatient] = useState("");
+  const [reportType, setReportType] = useState("Blood Test");
+  const [formData, setFormData] = useState({});
+  const [message, setMessage] = useState("");
+
+  const router = useRouter();
+
+  useEffect(() => {
+    getPatients().then((res) => setPatients(res.data));
+  }, []);
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      patient_id: parseInt(selectedPatient),
+      report_type: reportType,
+      report_data: formData
+    };
+    try {
+      await addReport(payload);
+      setMessage("✅ Report submitted successfully!");
+      setFormData({});
+      setSelectedPatient("");
+    } catch (err) {
+      console.error(err);
+      setMessage("❌ Failed to submit report");
+    }
+  };
+
+  return (
+    <div className="max-w-xl mx-auto p-6 bg-white rounded shadow">
+      <h2 className="text-2xl mb-4">Add Medical Report</h2>
+
+      {message && <div className="mb-4 text-green-600">{message}</div>}
+
+      <form onSubmit={handleSubmit}>
+        <label className="block mb-2">Select Patient</label>
+        <select
+          value={selectedPatient}
+          onChange={(e) => setSelectedPatient(e.target.value)}
+          className="w-full mb-4 p-2 border rounded"
+          required
+        >
+          <option value="">-- Choose Patient --</option>
+          {patients.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name} (Age: {p.age}, {p.gender})
+            </option>
+          ))}
+        </select>
+
+        <label className="block mb-2">Report Type</label>
+        <select
+          value={reportType}
+          onChange={(e) => {
+            setReportType(e.target.value);
+            setFormData({}); // reset on change
+          }}
+          className="w-full mb-4 p-2 border rounded"
+        >
+          {Object.keys(reportTemplates).map((type) => (
+            <option key={type}>{type}</option>
+          ))}
+        </select>
+
+        {reportTemplates[reportType].map((field) => (
+          <div key={field} className="mb-4">
+            <label>{field}</label>
+            <input
+              name={field}
+              value={formData[field] || ""}
+              onChange={handleInputChange}
+              className="w-full p-2 border rounded"
+              required
+            />
+          </div>
+        ))}
+
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Save Report
+        </button>
+      </form>
+    </div>
+  );
+}

@@ -1,13 +1,13 @@
-"use client";  
+"use client";
 import { useState, useEffect } from 'react';
-import api from '../../services/api';
+import { getPatients } from '@/services/api'; // ✅ Use named import
 import Link from 'next/link';
 
 const PatientsPage = () => {
   const [patients, setPatients] = useState([]);
 
   useEffect(() => {
-    api.get('/patients').then((res) => setPatients(res.data)).catch(console.error);
+    getPatients().then((res) => setPatients(res.data)).catch(console.error);
   }, []);
 
   return (
