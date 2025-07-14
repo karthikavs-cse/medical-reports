@@ -18,12 +18,12 @@ const PatientsPage = () => {
       </div>
       <table className="w-full border">
         <thead className="bg-gray-200">
-          <tr><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th></tr>
+          <tr><th>Name</th><th>Age</th><th>Gender</th><th>City</th><th>Phone</th></tr>
         </thead>
         <tbody>
           {patients.map((p) => (
             <tr key={p.id} className="border-t">
-              <td>{p.name}</td><td>{p.age}</td><td>{p.gender}</td><td>{p.phone}</td>
+              <td>{p.name}</td><td>{p.age}</td><td>{p.gender}</td><td>{p.city}</td><td>{p.phone}</td>
             </tr>
           ))}
         </tbody>

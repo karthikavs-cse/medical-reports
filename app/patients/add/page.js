@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 const AddPatientPage = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({ name: '', age: '', gender: '', phone: '' });
+  const [formData, setFormData] = useState({ name: '', age: '', gender: '', city: '' ,phone: ''});
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
@@ -61,6 +61,7 @@ const AddPatientPage = () => {
           <option value="Female">Female</option>
           <option value="Other">Other</option>
         </select>
+        <input name="city" placeholder="City" className="border p-2" onChange={handleChange} required />
         <input name="phone" placeholder="Phone" className="border p-2" onChange={handleChange} />
         <button type="submit" className="bg-green-500 text-white px-4 py-2">Save</button>
       </form>
